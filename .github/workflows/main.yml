@@ -1,0 +1,34 @@
+name: Run main.py hourly
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests notion-client
+
+      - name: Run main.py
+        run: python main.py
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          TARGET_GUILD_ID: ${{ secrets.TARGET_GUILD_ID }}
+          TARGET_CHANNEL_IDS: ${{ secrets.TARGET_CHANNEL_IDS }}
+          TARGET_EMOJIS: ${{ secrets.TARGET_EMOJIS }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
