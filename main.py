@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import time
 import requests
 from datetime import datetime, timezone
 
@@ -48,9 +49,38 @@ def ts_to_iso(dt):
 
 def discord_get(url, params=None):
     """Discord API を叩いて JSON を取得する"""
-    r = requests.get(
-        url, headers={"Authorization": f"Bot {TOKEN}"}, params=params or {}
-    )
+    headers = {"Authorization": f"Bot {TOKEN}"}
+    params = params or {}
+
+    # 429(Too Many Requests) は Retry-After を見てリトライ
+    for attempt in range(6):
+        r = requests.get(url, headers=headers, params=params)
+
+        if r.status_code != 429:
+            r.raise_for_status()
+            return r.json()
+
+        # Discordはヘッダ/ボディ両方で待機秒を返すことがある
+        retry_after = r.headers.get("Retry-After")
+        wait = None
+        if retry_after is not None:
+            try:
+                wait = float(retry_after)
+            except ValueError:
+                wait = None
+
+        if wait is None:
+            try:
+                body = r.json()
+                wait = float(body.get("retry_after", 2.0))
+            except Exception:
+                wait = 2.0
+
+        wait = max(wait, 0.5)
+        print(f"[WARN] Discord rate limited (429). Sleep {wait:.2f}s and retry...")
+        time.sleep(wait)
+
+    # リトライ上限超過
     r.raise_for_status()
     return r.json()
 
