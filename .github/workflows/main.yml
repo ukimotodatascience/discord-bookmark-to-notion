@@ -8,6 +8,7 @@ on:
 jobs:
   run-main:
     runs-on: ubuntu-latest
+    environment: Discord bookmark to Notion
 
     steps:
       - name: Checkout repository
