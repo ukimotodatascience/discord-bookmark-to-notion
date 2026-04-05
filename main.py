@@ -201,6 +201,9 @@ def main():
 
     for ch in text_channels:
         channel_name = get_channel_name(ch)
+        if channel_name == "ブックマーク":
+            print(f"[INFO] Skip channel {ch}: {channel_name}")
+            continue
         for m in iter_messages(ch, after_iso):
             if has_target_reaction(m):
                 collected.append(
