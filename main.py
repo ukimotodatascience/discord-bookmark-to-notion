@@ -7,11 +7,11 @@ from datetime import datetime, timezone
 from notion_client import Client
 
 
-DISCORD_API = os.environ["DISCORD_API"]
-TOKEN = os.environ["DISCORD_TOKEN"]
-GUILD = os.environ["TARGET_GUILD_ID"]
-EMOJIS = set(e.strip() for e in os.environ["TARGET_EMOJIS"].split(",") if e.strip())
-STATE_PATH = os.environ["STATE_PATH"]
+# DISCORD_API = os.environ["DISCORD_API"]
+# TOKEN = os.environ["DISCORD_TOKEN"]
+# GUILD = os.environ["TARGET_GUILD_ID"]
+# EMOJIS = set(e.strip() for e in os.environ["TARGET_EMOJIS"].split(",") if e.strip())
+# STATE_PATH = os.environ["STATE_PATH"]
 CHANNEL_NAME_CACHE = {}  # チャンネル名のキャッシュ
 
 
