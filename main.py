@@ -93,7 +93,14 @@ def iter_messages(channel_id, after_iso):
         if before_id:
             params["before"] = before_id
 
-        msgs = discord_get(f"{DISCORD_API}/channels/{channel_id}/messages", params)
+        try:
+            msgs = discord_get(f"{DISCORD_API}/channels/{channel_id}/messages", params)
+        except requests.HTTPError as e:
+            # 特定チャンネルで閲覧権限がない(403)場合は、そのチャンネルのみスキップ
+            if e.response is not None and e.response.status_code == 403:
+                print(f"[WARN] Skip channel {channel_id}: 403 Forbidden")
+                break
+            raise
         if not msgs:
             break
 
